@@ -22,7 +22,4 @@ class NetworkMonitor {
         monitor.start(queue: queue)
     }
 
-    func reset() {
-        isConnected = false
-    }
 }

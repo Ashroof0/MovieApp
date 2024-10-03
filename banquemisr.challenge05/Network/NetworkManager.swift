@@ -73,4 +73,40 @@ class NetworkService {
         }
         task.resume()
     }
+    func getMovieDetails(for movieId: Int, completion: @escaping (Result<MovieDetails, ErrorMessage>) -> Void) {
+            let endpoint = "\(movieId)?api_key=\(apiKey)"
+            
+            // Construct the URL
+            guard let url = URL(string: baseUrl + endpoint) else {
+                completion(.failure(.invalidRequest))
+                return
+            }
+            
+            let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                if let _ = error {
+                    completion(.failure(.unableToComplete))
+                    return
+                }
+                
+                guard let _ = response else {
+                    completion(.failure(.invalidResponse))
+                    return
+                }
+                
+                guard let data = data else {
+                    completion(.failure(.invalidData))
+                    return
+                }
+                
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    let movieDetails = try decoder.decode(MovieDetails.self, from: data)
+                    completion(.success(movieDetails))
+                } catch {
+                    completion(.failure(.invalidData))
+                }
+            }
+            task.resume()
+        }
 }

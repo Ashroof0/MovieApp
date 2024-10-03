@@ -1,15 +1,15 @@
 //
-//  NowViewController.swift
+//  UpComingViewController.swift
 //  banquemisr.challenge05
 //
-//  Created by Enas Mohamed on 02/10/2024.
+//  Created by Enas Mohamed on 03/10/2024.
 //
 
 import UIKit
 
-class NowViewController: UIViewController, UITableViewDelegate {
-
-    @IBOutlet weak var NowTableView: UITableView!
+class UpcomingViewController: UIViewController, UITableViewDelegate {
+    
+    @IBOutlet weak var upcomingTableView: UITableView!
     private let viewModel = MovieViewModel()
     private var loadingIndicatorView: UIView!
     private var activityIndicator: UIActivityIndicatorView!
@@ -19,24 +19,24 @@ class NowViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-       // checkInternetConnection()
     }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        checkInternetConnection()
+        checkInternetConnection() 
     }
 
     private func setupUI() {
-        NowTableView.dataSource = self
-        NowTableView.delegate = self
+        upcomingTableView.dataSource = self
+        upcomingTableView.delegate = self
         setupLoadingIndicator()
         let nib = UINib(nibName: "MovieTableViewCell", bundle: nil)
-        NowTableView.register(nib, forCellReuseIdentifier: "MovieCell")
+        upcomingTableView.register(nib, forCellReuseIdentifier: "MovieCell")
 
-        // Bind view model
+       
         viewModel.movieloading = { [weak self] in
             DispatchQueue.main.async {
-                self?.NowTableView.reloadData()
+                self?.upcomingTableView.reloadData()
                 self?.hideLoadingIndicator()
             }
         }
@@ -53,15 +53,13 @@ class NowViewController: UIViewController, UITableViewDelegate {
         if NetworkMonitor.shared.isConnected {
             fetchMovies()
         } else {
-            print("JK Checked already")
             showNoConnectionAlert(message: "No internet connection.")
         }
     }
 
     private func fetchMovies() {
         showLoadingIndicator()
-        viewModel.fetchMovies(category: .popular) {
-            // Additional completion logic if needed
+        viewModel.fetchMovies(category: .upcoming) {
         }
     }
 
@@ -119,13 +117,9 @@ class NowViewController: UIViewController, UITableViewDelegate {
         }
     }
 
-    
-
-
-
 }
 
-extension NowViewController: UITableViewDataSource {
+extension UpcomingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.movies.count
     }
