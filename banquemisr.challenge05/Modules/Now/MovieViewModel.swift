@@ -25,7 +25,7 @@ class MovieViewModel {
     var errorMessage: String?
     private let networkService = NetworkService.shared
 
-    func fetchMovies(category: MovieCategory, completion: @escaping () -> Void) {
+    func fetchMovies(category: MovieCategory) {
         isLoading = true
         errorMessage = nil
         
@@ -36,13 +36,13 @@ class MovieViewModel {
                 switch result {
                 case .success(let moviesList):
                     self?.movies = moviesList.results
+                    print(self?.movies)
                     self?.saveMoviesToCoreData(movies: moviesList.results)
                     self?.movieloading()
                 case .failure(let error):
                     self?.errorMessage = error.rawValue
                     self?.showError?(error.rawValue) 
                 }
-                completion()
             }
         }
     }
@@ -62,12 +62,16 @@ class MovieViewModel {
         }
     }
     
-    func startNetworkMonitoring() {
+    func startNetworkMonitoring(endPoint : MovieCategory) {
         NetworkMonitor.shared.startMonitoring { [weak self] isConnected in
             if !isConnected {
                 self?.showError?("You are in offline mode now. No internet connection.")
                 self?.fetchMoviesFromCoreData()
             }
+            else {
+                self?.fetchMovies(category: endPoint)
+            }
+            
         }
     }
 

@@ -19,7 +19,8 @@ class NowViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        viewModel.startNetworkMonitoring() 
+        viewModel.startNetworkMonitoring(endPoint: .nowPlaying)
+    
     }
 
     private func setupUI() {
@@ -48,9 +49,6 @@ class NowViewController: UIViewController, UITableViewDelegate {
 
     private func fetchMovies() {
         showLoadingIndicator()
-        viewModel.fetchMovies(category: .popular) {
-            
-        }
     }
 
     private func setupLoadingIndicator() {
@@ -90,7 +88,8 @@ class NowViewController: UIViewController, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120
+        return 150
+        
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

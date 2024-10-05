@@ -50,11 +50,11 @@ class DetailsViewController: UIViewController {
 
 
     private func updateUI(with movieDetails: MovieDetails) {
-        titleLabel.text = movieDetails.title
+        titleLabel.text = "Title: " + movieDetails.title
         overViewLabel.text = movieDetails.overview
-        revenueLabel.text = String(movieDetails.revenue)
-        runtimeLabel.text = String(movieDetails.runtime) + " minutes"
-        genresLabel.text = movieDetails.genres.map { $0.name }.joined(separator: "")
+        revenueLabel.text = "Revenue: " + String(movieDetails.revenue)
+        runtimeLabel.text = "Run Time: " + String(movieDetails.runtime) + " minutes"
+        genresLabel.text = "Geners: " + movieDetails.genres.map { $0.name }.joined(separator: " - ")
     
         if let posterPath = movieDetails.posterPath {
             viewModel.downloadImage(from: posterPath) { result in

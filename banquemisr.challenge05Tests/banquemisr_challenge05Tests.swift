@@ -25,8 +25,10 @@ class MovieViewModelIntegrationTests: XCTestCase {
         let expectation = self.expectation(description: "Fetch movies from network")
         
    
-        viewModel.fetchMovies(category: .popular) {
+        viewModel.fetchMovies(category: .nowPlaying)
+        viewModel.movieloading = {
             expectation.fulfill()
+            
         }
         
         waitForExpectations(timeout: 10) { error in

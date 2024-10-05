@@ -19,7 +19,7 @@ class PopularViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        viewModel.startNetworkMonitoring()
+        viewModel.startNetworkMonitoring(endPoint: .popular)
     }
 
    
@@ -49,10 +49,7 @@ class PopularViewController: UIViewController, UITableViewDelegate {
 
     private func fetchMovies() {
         showLoadingIndicator()
-        viewModel.fetchMovies(category: .popular) {
-            print("Fetched Movies: \(self.viewModel.movies)") // Log the fetched movies
-            // Additional completion logic if needed
-        }
+
     }
 
     private func setupLoadingIndicator() {
@@ -89,7 +86,7 @@ class PopularViewController: UIViewController, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120
+        return 150
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

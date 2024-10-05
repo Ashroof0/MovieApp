@@ -19,7 +19,7 @@ class UpcomingViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        viewModel.startNetworkMonitoring()
+        viewModel.startNetworkMonitoring(endPoint: .upcoming)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -52,8 +52,6 @@ class UpcomingViewController: UIViewController, UITableViewDelegate {
 
     private func fetchMovies() {
         showLoadingIndicator()
-        viewModel.fetchMovies(category: .upcoming) {
-        }
     }
 
     private func setupLoadingIndicator() {
@@ -90,7 +88,7 @@ class UpcomingViewController: UIViewController, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120
+        return 150
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
    
