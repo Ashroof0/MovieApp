@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 
 class MovieRepo {
-    static let shared = MovieRepo()
+     static let shared = MovieRepo()
     
     private init() {}
     
@@ -26,14 +26,14 @@ class MovieRepo {
     
     func saveMoviesToCoreData(movies: [Movie]) {
         for movie in movies {
-            // Check if the movie already exists in Core Data
+
             let fetchRequest: NSFetchRequest<MovieEntity> = MovieEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %d", movie.id)
 
             do {
                 let existingMovies = try CoreDataStack.shared.context.fetch(fetchRequest)
 
-                // Only save if the movie does not already exist
+ 
                 if existingMovies.isEmpty {
                     let movieEntity = MovieEntity(context: CoreDataStack.shared.context)
                     movieEntity.id = Int32(movie.id)
@@ -47,7 +47,6 @@ class MovieRepo {
             }
         }
 
-        // Save context only if there are changes
         do {
             try CoreDataStack.shared.context.save()
             print("JK Saved some")

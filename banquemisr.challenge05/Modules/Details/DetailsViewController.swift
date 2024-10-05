@@ -22,7 +22,7 @@ class DetailsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("Received Movie ID: \(movieId ?? -1)") // Check the ID received
+        print("Received Movie ID: \(movieId ?? -1)") 
         fetchDetails()
     }
 

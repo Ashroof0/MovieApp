@@ -16,10 +16,12 @@ enum MovieCategory: String {
 }
 
 class MovieViewModel {
+    
     var movies: [Movie] = []
     var movieloading: (() -> Void) = {}
     var showError: ((String) -> Void)?
     var isLoading = false
+    
     var errorMessage: String?
     private let networkService = NetworkService.shared
 
@@ -28,17 +30,17 @@ class MovieViewModel {
         errorMessage = nil
         
         networkService.fetchData(endpoint: category.rawValue, model: MoviesList.self) { [weak self] (result: Result<MoviesList, ErrorMessage>) in
-            DispatchQueue.main.async { // Ensure UI updates happen on the main thread
+            DispatchQueue.main.async {
                 self?.isLoading = false
                 
                 switch result {
                 case .success(let moviesList):
                     self?.movies = moviesList.results
                     self?.saveMoviesToCoreData(movies: moviesList.results)
-                    self?.movieloading() // Ensure this triggers UI update on the main thread
+                    self?.movieloading()
                 case .failure(let error):
                     self?.errorMessage = error.rawValue
-                    self?.showError?(error.rawValue) // Ensure this triggers UI update on the main thread
+                    self?.showError?(error.rawValue) 
                 }
                 completion()
             }

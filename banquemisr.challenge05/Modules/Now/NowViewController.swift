@@ -30,7 +30,7 @@ class NowViewController: UIViewController, UITableViewDelegate {
         let nib = UINib(nibName: "MovieTableViewCell", bundle: nil)
         NowTableView.register(nib, forCellReuseIdentifier: "MovieCell")
 
-        // Bind view model
+  
         viewModel.movieloading = { [weak self] in
             DispatchQueue.main.async { // Ensure UI updates are on the main thread
                 self?.NowTableView.reloadData()

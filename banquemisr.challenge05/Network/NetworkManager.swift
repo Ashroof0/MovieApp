@@ -76,7 +76,7 @@ class NetworkService {
     func getMovieDetails(for movieId: Int, completion: @escaping (Result<MovieDetails, ErrorMessage>) -> Void) {
             let endpoint = "\(movieId)?api_key=\(apiKey)"
             
-            // Construct the URL
+         
             guard let url = URL(string: baseUrl + endpoint) else {
                 completion(.failure(.invalidRequest))
                 return
