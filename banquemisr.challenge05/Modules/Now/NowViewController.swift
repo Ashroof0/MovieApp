@@ -19,49 +19,37 @@ class NowViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-       // checkInternetConnection()
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        checkInternetConnection()
+        viewModel.startNetworkMonitoring() 
     }
 
     private func setupUI() {
         NowTableView.dataSource = self
         NowTableView.delegate = self
         setupLoadingIndicator()
+        
         let nib = UINib(nibName: "MovieTableViewCell", bundle: nil)
         NowTableView.register(nib, forCellReuseIdentifier: "MovieCell")
 
         // Bind view model
         viewModel.movieloading = { [weak self] in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { // Ensure UI updates are on the main thread
                 self?.NowTableView.reloadData()
                 self?.hideLoadingIndicator()
             }
         }
         
         viewModel.showError = { [weak self] errorMessage in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { // Ensure UI updates are on the main thread
                 self?.hideLoadingIndicator()
                 self?.showNoConnectionAlert(message: errorMessage)
             }
         }
     }
 
-    private func checkInternetConnection() {
-        if NetworkMonitor.shared.isConnected {
-            fetchMovies()
-        } else {
-            print("JK Checked already")
-            showNoConnectionAlert(message: "No internet connection.")
-        }
-    }
-
     private func fetchMovies() {
         showLoadingIndicator()
         viewModel.fetchMovies(category: .popular) {
-            // Additional completion logic if needed
+            
         }
     }
 
@@ -88,41 +76,37 @@ class NowViewController: UIViewController, UITableViewDelegate {
     }
 
     private func showNoConnectionAlert(message: String) {
-        guard !isAlertPresented else { return }
-        isAlertPresented = true
+        DispatchQueue.main.async {
+            guard !self.isAlertPresented else { return }
+            self.isAlertPresented = true
 
-        let alert = UIAlertController(title: "Connection Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            self.isAlertPresented = false
-        })
-        present(alert, animated: true)
+            let alert = UIAlertController(title: "Connection Error", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                self.isAlertPresented = false
+            })
+            self.present(alert, animated: true)
+        }
+    
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
     }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-   
         tableView.deselectRow(at: indexPath, animated: true)
         selectedIndexPath = indexPath
-        
         performSegue(withIdentifier: "ShowDetails", sender: nil)
     }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowDetails",
            let destinationVC = segue.destination as? DetailsViewController {
-            
             let selectedMovie = viewModel.movies[selectedIndexPath.row]
             destinationVC.movieId = selectedMovie.id
-            
             print("Selected Movie ID: \(selectedMovie.id)")
         }
     }
-
-    
-
-
-
 }
 
 extension NowViewController: UITableViewDataSource {

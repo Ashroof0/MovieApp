@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 import UIKit
 
 enum MovieCategory: String {
@@ -27,21 +28,23 @@ class MovieViewModel {
         errorMessage = nil
         
         networkService.fetchData(endpoint: category.rawValue, model: MoviesList.self) { [weak self] (result: Result<MoviesList, ErrorMessage>) in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { // Ensure UI updates happen on the main thread
                 self?.isLoading = false
                 
                 switch result {
                 case .success(let moviesList):
                     self?.movies = moviesList.results
-                    self?.movieloading()
+                    self?.saveMoviesToCoreData(movies: moviesList.results)
+                    self?.movieloading() // Ensure this triggers UI update on the main thread
                 case .failure(let error):
                     self?.errorMessage = error.rawValue
-                    self?.showError?(error.rawValue)
+                    self?.showError?(error.rawValue) // Ensure this triggers UI update on the main thread
                 }
                 completion()
             }
         }
     }
+
     func getMovieImage(posterPath: String, completion: @escaping (UIImage?) -> Void) {
         NetworkService.shared.downloadImage(from: posterPath) { [weak self] result in
             guard let self = self else { return }
@@ -56,5 +59,39 @@ class MovieViewModel {
             }
         }
     }
+    
+    func startNetworkMonitoring() {
+        NetworkMonitor.shared.startMonitoring { [weak self] isConnected in
+            if !isConnected {
+                self?.showError?("You are in offline mode now. No internet connection.")
+                self?.fetchMoviesFromCoreData()
+            }
+        }
+    }
 
 }
+
+
+extension MovieViewModel {
+    func fetchMoviesFromCoreData() {
+        MovieRepo.shared.fetchMoviesFromCoreData { [weak self] (result: Result<[Movie], ErrorMessage>) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let movies):
+                    self?.movies = movies
+                    self?.movieloading()
+                case .failure(let error):
+                    self?.errorMessage = error.rawValue
+                    self?.showError?(error.rawValue)
+                }
+            }
+        }
+    }
+
+
+    
+    func saveMoviesToCoreData(movies: [Movie]) {
+        MovieRepo.shared.saveMoviesToCoreData(movies: movies)
+    }
+}
+

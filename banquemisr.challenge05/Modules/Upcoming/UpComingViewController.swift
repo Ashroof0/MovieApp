@@ -19,11 +19,11 @@ class UpcomingViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        viewModel.startNetworkMonitoring()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        checkInternetConnection() 
     }
 
     private func setupUI() {
@@ -49,13 +49,6 @@ class UpcomingViewController: UIViewController, UITableViewDelegate {
         }
     }
 
-    private func checkInternetConnection() {
-        if NetworkMonitor.shared.isConnected {
-            fetchMovies()
-        } else {
-            showNoConnectionAlert(message: "No internet connection.")
-        }
-    }
 
     private func fetchMovies() {
         showLoadingIndicator()

@@ -14,12 +14,15 @@ class NetworkMonitor {
 
     private init() {
         monitor = NWPathMonitor()
+    }
+
+    func startMonitoring(updateHandler: @escaping (Bool) -> Void) {
         monitor.pathUpdateHandler = { [weak self] path in
             self?.isConnected = path.status == .satisfied
             print("Network status changed: \(self?.isConnected == true ? "Connected" : "Disconnected")")
+            updateHandler(self?.isConnected == true)
         }
         let queue = DispatchQueue(label: "NetworkMonitor")
         monitor.start(queue: queue)
     }
-
 }

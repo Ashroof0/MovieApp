@@ -19,12 +19,10 @@ class PopularViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        viewModel.startNetworkMonitoring()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        checkInternetConnection()
-    }
+   
 
     private func setupUI() {
         popularTableView.dataSource = self
@@ -46,14 +44,6 @@ class PopularViewController: UIViewController, UITableViewDelegate {
                 self?.hideLoadingIndicator()
                 self?.showNoConnectionAlert(message: errorMessage)
             }
-        }
-    }
-
-    private func checkInternetConnection() {
-        if NetworkMonitor.shared.isConnected {
-            fetchMovies()
-        } else {
-            showNoConnectionAlert(message: "No internet connection.")
         }
     }
 
